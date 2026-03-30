@@ -3,13 +3,16 @@
     "version": "1.0.0",
     "description": "Automation for Jira Filters using Playwright",
     "scripts": {
-      "test": "playwright test",
-      "test:headed": "playwright test --headed",
-      "test:api": "playwright test --project=jira-filters-api",
-      "test:ui": "playwright test --project=setup --project=jira-filters"
+        "auth": "node scripts/auth.js",
+        "test": "playwright test",
+        "test:headed": "playwright test --headed",
+        "test:api": "playwright test --project=jira-filters-api",
+        "test:ui": "playwright test --project=setup --project=jira-filters",
+        "report": "npx allure generate --output allure-report --open"
     },
     "devDependencies": {
-      "@playwright/test": "^1.40.0",
-      "dotenv": "^16.0.0"
+        "@playwright/test": "^1.40.0",
+        "allure-playwright": "^3.6.0",
+        "dotenv": "^16.0.0"
     }
-  }
+}
