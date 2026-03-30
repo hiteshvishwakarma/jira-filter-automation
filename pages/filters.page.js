@@ -38,6 +38,7 @@ class FiltersPage {
     // Wait for save to complete
     await this.page.waitForLoadState('domcontentloaded');
     await this.page.waitForTimeout(1000);
+
   }
 
   /**

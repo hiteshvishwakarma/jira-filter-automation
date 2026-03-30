@@ -97,4 +97,40 @@ async function deleteFilter(filterId) {
   }
 }
 
-module.exports = { searchByJql, getStatusNames, createFilter, getFilter, deleteFilter };
+/**
+ * Remove a filter from the user's starred/favourites list.
+ * Jira Cloud REST API: DELETE /rest/api/3/filter/{id}/favourite
+ * @param {string} filterId
+ */
+async function unstarFilter(filterId) {
+  const res = await fetch(`${JIRA_URL}/rest/api/3/filter/${filterId}/favourite`, {
+    method: 'DELETE',
+    headers,
+  });
+
+  if (!res.ok && res.status !== 404) {
+    const body = await res.text();
+    throw new Error(`Unstar filter failed (${res.status}): ${body}`);
+  }
+}
+
+/**
+ * Get all filters owned by the current user (for cleanup).
+ * @param {string} namePrefix - Filter name prefix to match
+ * @returns {Promise<Array<{id: string, name: string}>>}
+ */
+async function getMyFilters(namePrefix) {
+  const res = await fetch(`${JIRA_URL}/rest/api/3/filter/my`, { headers });
+
+  if (!res.ok) {
+    return [];
+  }
+
+  const filters = await res.json();
+  if (namePrefix) {
+    return filters.filter(f => f.name.startsWith(namePrefix));
+  }
+  return filters;
+}
+
+module.exports = { searchByJql, getStatusNames, createFilter, getFilter, deleteFilter, unstarFilter, getMyFilters };

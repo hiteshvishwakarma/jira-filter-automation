@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test');
-const { searchByJql, getStatusNames, createFilter, getFilter, deleteFilter } = require('../utils/jira-api');
+const { searchByJql, getStatusNames, createFilter, getFilter, deleteFilter, unstarFilter } = require('../utils/jira-api');
 const { OPEN_STATUSES, CLOSED_STATUSES } = require('../utils/constants');
 
 // These tests use the Jira REST API directly — no browser login required.
@@ -12,6 +12,7 @@ test.describe('Jira Filters — API', () => {
   test.afterAll(async () => {
     // Clean up any filters created during tests
     for (const id of createdFilterIds) {
+      await unstarFilter(id).catch(() => {});
       await deleteFilter(id).catch(() => {});
     }
   });

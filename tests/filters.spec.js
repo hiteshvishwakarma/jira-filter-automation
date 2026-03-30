@@ -1,8 +1,21 @@
 const { test, expect } = require('@playwright/test');
 const FiltersPage = require('../pages/filters.page');
+const { deleteFilter, unstarFilter, getMyFilters } = require('../utils/jira-api');
 const { OPEN_STATUSES, CLOSED_STATUSES } = require('../utils/constants');
 
+// Prefix for all test-created filters — used for cleanup
+const FILTER_PREFIX = 'AutoTest_';
+
 test.describe('Jira Filters Automation', () => {
+
+  test.afterAll(async () => {
+    // Find and delete all filters created by these tests via API
+    const testFilters = await getMyFilters(FILTER_PREFIX).catch(() => []);
+    for (const filter of testFilters) {
+      await unstarFilter(filter.id).catch(() => {});
+      await deleteFilter(filter.id).catch(() => {});
+    }
+  });
 
   test('Create and validate Open Items Filter', async ({ page }) => {
     const filtersPage = new FiltersPage(page);
@@ -27,8 +40,8 @@ test.describe('Jira Filters Automation', () => {
       expect(OPEN_STATUSES.map(s => s.toUpperCase())).toContain(status.toUpperCase());
     }
 
-    // Step 2: Save the search as a named filter (use unique name to avoid duplicate errors)
-    const filterName = `Open Items Filter ${Date.now()}`;
+    // Step 2: Save the search as a named filter
+    const filterName = `${FILTER_PREFIX}Open Items Filter ${Date.now()}`;
     await filtersPage.saveAsFilter(filterName);
 
     // Assertion 4: Filter is created and visible on the page
@@ -58,7 +71,7 @@ test.describe('Jira Filters Automation', () => {
     }
 
     // Step 2: Save with unique name
-    const filterName = `Closed Items Filter ${Date.now()}`;
+    const filterName = `${FILTER_PREFIX}Closed Items Filter ${Date.now()}`;
     await filtersPage.saveAsFilter(filterName);
 
     // Assertion 4: Filter is created and visible
