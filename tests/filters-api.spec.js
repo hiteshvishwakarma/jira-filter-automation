@@ -22,23 +22,27 @@ test.describe('Jira Filters — API', () => {
     // Step 1: Search issues with JQL
     const results = await searchByJql(jql);
 
-    // Step 2: Create a saved filter
-    const filter = await createFilter('Open Items Filter (API)', jql);
+    // Step 2: Results must exist — empty results would silently skip status validation
+    const statuses = getStatusNames(results.issues);
+    expect(statuses.length).toBeGreaterThan(0);
+
+    // Step 3: All returned issues should have open statuses
+    for (const status of statuses) {
+      expect(OPEN_STATUSES.map(s => s.toUpperCase())).toContain(status.toUpperCase());
+    }
+
+    // Step 4: Create a saved filter (unique name to avoid duplicate errors)
+    const filterName = `Open Items Filter API ${Date.now()}`;
+    const filter = await createFilter(filterName, jql);
     createdFilterIds.push(filter.id);
 
-    expect(filter.name).toBe('Open Items Filter (API)');
+    expect(filter.name).toBe(filterName);
     expect(filter.jql).toBe(jql);
 
-    // Step 3: Verify filter is retrievable
+    // Step 5: Verify filter is retrievable
     const fetched = await getFilter(filter.id);
-    expect(fetched.name).toBe('Open Items Filter (API)');
+    expect(fetched.name).toBe(filterName);
     expect(fetched.jql).toBe(jql);
-
-    // Step 4: All returned issues should have open statuses
-    const statuses = getStatusNames(results.issues);
-    for (const status of statuses) {
-      expect(OPEN_STATUSES).toContain(status);
-    }
   });
 
   test('Create and validate Closed Items Filter via API', async () => {
@@ -46,19 +50,24 @@ test.describe('Jira Filters — API', () => {
 
     const results = await searchByJql(jql);
 
-    const filter = await createFilter('Closed Items Filter (API)', jql);
+    // Results must exist
+    const statuses = getStatusNames(results.issues);
+    expect(statuses.length).toBeGreaterThan(0);
+
+    // All returned issues should have closed statuses
+    for (const status of statuses) {
+      expect(CLOSED_STATUSES.map(s => s.toUpperCase())).toContain(status.toUpperCase());
+    }
+
+    const filterName = `Closed Items Filter API ${Date.now()}`;
+    const filter = await createFilter(filterName, jql);
     createdFilterIds.push(filter.id);
 
-    expect(filter.name).toBe('Closed Items Filter (API)');
+    expect(filter.name).toBe(filterName);
     expect(filter.jql).toBe(jql);
 
     const fetched = await getFilter(filter.id);
-    expect(fetched.name).toBe('Closed Items Filter (API)');
-
-    const statuses = getStatusNames(results.issues);
-    for (const status of statuses) {
-      expect(CLOSED_STATUSES).toContain(status);
-    }
+    expect(fetched.name).toBe(filterName);
   });
 
   test('Validate empty results for non-existent project via API', async () => {

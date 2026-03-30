@@ -18,17 +18,21 @@ test.describe('Jira Filters Automation', () => {
     expect(appliedJql).toContain('To Do');
     expect(appliedJql).toContain('In Progress');
 
-    // Assertion 2: All returned issues have open statuses only
+    // Assertion 2: Results must exist — empty results would silently skip validation
     const statuses = await filtersPage.getIssueStatuses();
+    expect(statuses.length).toBeGreaterThan(0);
+
+    // Assertion 3: All returned issues have open statuses only
     for (const status of statuses) {
       expect(OPEN_STATUSES.map(s => s.toUpperCase())).toContain(status.toUpperCase());
     }
 
-    // Step 2: Save the search as a named filter
-    await filtersPage.saveAsFilter('Open Items Filter');
+    // Step 2: Save the search as a named filter (use unique name to avoid duplicate errors)
+    const filterName = `Open Items Filter ${Date.now()}`;
+    await filtersPage.saveAsFilter(filterName);
 
-    // Assertion 3: Filter is created and visible on the page
-    const isVisible = await filtersPage.isFilterNameVisible('Open Items Filter');
+    // Assertion 4: Filter is created and visible on the page
+    const isVisible = await filtersPage.isFilterNameVisible(filterName);
     expect(isVisible).toBeTruthy();
   });
 
@@ -44,17 +48,21 @@ test.describe('Jira Filters Automation', () => {
     expect(appliedJql).toContain('Done');
     expect(appliedJql).toContain('Closed');
 
-    // Assertion 2: All returned issues have closed statuses only
+    // Assertion 2: Results must exist
     const statuses = await filtersPage.getIssueStatuses();
+    expect(statuses.length).toBeGreaterThan(0);
+
+    // Assertion 3: All returned issues have closed statuses only
     for (const status of statuses) {
       expect(CLOSED_STATUSES.map(s => s.toUpperCase())).toContain(status.toUpperCase());
     }
 
-    // Step 2: Save
-    await filtersPage.saveAsFilter('Closed Items Filter');
+    // Step 2: Save with unique name
+    const filterName = `Closed Items Filter ${Date.now()}`;
+    await filtersPage.saveAsFilter(filterName);
 
-    // Assertion 3: Filter is created and visible
-    const isVisible = await filtersPage.isFilterNameVisible('Closed Items Filter');
+    // Assertion 4: Filter is created and visible
+    const isVisible = await filtersPage.isFilterNameVisible(filterName);
     expect(isVisible).toBeTruthy();
   });
 
