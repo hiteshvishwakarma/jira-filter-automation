@@ -4,7 +4,9 @@
     "description": "Automation for Jira Filters using Playwright",
     "scripts": {
       "test": "playwright test",
-      "test:headed": "playwright test --headed"
+      "test:headed": "playwright test --headed",
+      "test:api": "playwright test --project=jira-filters-api",
+      "test:ui": "playwright test --project=setup --project=jira-filters"
     },
     "devDependencies": {
       "@playwright/test": "^1.40.0",

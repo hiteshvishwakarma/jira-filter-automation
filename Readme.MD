@@ -2,11 +2,22 @@
 
 ## Overview
 
-This project automates the creation and validation of Jira filters on **Jira Cloud** (atlassian.net) using **Playwright (JavaScript)**. It is built as a QA automation assignment to demonstrate UI test automation for a real Jira workflow.
+This repository contains both deliverables for the QA Automation assignment:
+
+- **Part A** — Test Plan & Test Cases for the AI-based Issue Search feature in Jira ([View Document](docs/Part-A-Test-Plan-AI-Based-Issue-Search.md))
+- **Part B** — UI automation framework for Jira Filters workflow using Playwright (this README)
 
 > **Note:** This project is designed and tested for **Jira Cloud** only. It is not compatible with Jira Server or Jira Data Center, which have a different UI and DOM structure.
 
-### What it validates
+### Part A: AI-Based Issue Search — Test Plan & Test Cases
+
+The complete test plan and 22 test cases (8 AI-specific, 6 functional, 3 non-functional, 5 negative/edge cases) are documented in:
+
+**[docs/Part-A-Test-Plan-AI-Based-Issue-Search.md](docs/Part-A-Test-Plan-AI-Based-Issue-Search.md)**
+
+Covers intent understanding, hallucination detection, consistency checks, ambiguity handling, synonym understanding, and more.
+
+### Part B: Jira Filters Automation — What it validates
 
 - Filter is created and saved successfully
 - JQL criteria match expected open/closed statuses
@@ -159,6 +170,8 @@ jira-filter-automation/
 │   └── filters.page.js           # Page Object for Jira Filters / Issue Navigator
 ├── utils/
 │   └── constants.js              # Status lists, priorities, and issue types
+├── docs/
+│   └── Part-A-Test-Plan-AI-Based-Issue-Search.md  # Part A: Test plan + 22 test cases
 ├── .env.example                  # Template for environment variables
 ├── .gitignore                    # Git ignore rules
 ├── playwright.config.js          # Playwright config with auth setup project

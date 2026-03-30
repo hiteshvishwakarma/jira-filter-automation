@@ -18,13 +18,18 @@ module.exports = defineConfig({
       name: 'setup',
       testMatch: /auth\.setup\.js/,
     },
-    // Main test suite — reuses the saved auth state (no re-login per test)
+    // UI test suite — reuses the saved auth state (no re-login per test)
     {
       name: 'jira-filters',
       dependencies: ['setup'],
       use: {
         storageState: 'playwright/.auth/user.json',
       },
+    },
+    // API test suite — no browser login, uses API token directly
+    {
+      name: 'jira-filters-api',
+      testMatch: /filters-api\.spec\.js/,
     },
   ],
 });
